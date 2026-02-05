@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>Seguimiento • Rhodes Burgers</title>
+  <link rel="icon" href="images/logo.png" />
+  
+  <style>
+    :root{
+      --primary: #625A45; 
+      --accent: #F5A524;
+      --text: #1f1f1f; 
+      --muted: #757575; 
+      --bg: #f4f1ea; 
+      --card: #ffffff;
+      --ring: #e0e0e0;
+      
+      /* Estados */
+      --st-pending: #ff9800;
+      --st-success: #2e7d32;
+      --st-error: #d32f2f;
+      --st-info: #0288d1;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    /* HEADER */
+    header {
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      padding: 10px 20px;
+    }
+    .topbar {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .brand img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+    .btn-back {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: #f5f5f5;
+      transition: all .2s;
+    }
+    .btn-back:hover { background: #e0e0e0; color: #000; }
+
+    /* LAYOUT */
+    main {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 15px;
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 20px;
+    }
+    @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    h1 { font-size: 24px; margin: 0 0 5px; color: var(--primary); line-height: 1.2; }
+    h2 { font-size: 18px; margin: 0 0 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    
+    .subtitle { font-size: 15px; color: var(--muted); margin-bottom: 20px; }
+
+    /* STATUS BADGE */
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .order-num { font-size: 14px; font-weight: 700; color: #999; letter-spacing: 1px; text-transform: uppercase; }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-weight: 700; font-size: 14px;
+      background: #eee; color: #555;
+    }
+    
+    /* COLORES ESTADO */
+    .st-pending_payment { background: #fff3e0; color: #e65100; }
+    .st-accepted { background: #e3f2fd; color: #0d47a1; }
+    .st-preparing { background: #fff8e1; color: #f57f17; }
+    .st-ready_for_pickup { background: #e0f2f1; color: #00695c; }
+    .st-completed { background: #e8f5e9; color: #1b5e20; }
+    .st-cancelled { background: #ffebee; color: #c62828; }
+
+    /* TIMELINE STEPS */
+    .timeline { margin: 30px 0; display: flex; justify-content: space-between; position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; top: 14px; left: 0; right: 0; height: 3px; background: #eee; z-index: 0;
+    }
+    .step-item {
+      position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; width: 20%;
+    }
+    .step-dot {
+      width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 3px solid #ddd;
+      display: grid; place-items: center; font-size: 12px; color: transparent; transition: all .3s;
+    }
+    .step-label {
+      font-size: 11px; font-weight: 600; color: #bbb; margin-top: 8px; text-align: center; line-height: 1.2;
+    }
+    
+    /* Active Steps */
+    .step-item.active .step-dot { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(98,90,69,0.2); }
+    .step-item.active .step-label { color: var(--primary); }
+    .step-item.done .step-dot { background: var(--primary); border-color: var(--primary); }
+    .step-item.done .step-label { color: var(--primary); }
+
+    /* DETALLE DEL PEDIDO */
+    .item-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 15px; }
+    .item-row:last-child { border-bottom: none; }
+    .item-name { font-weight: 600; }
+    .item-sub { display: block; font-size: 13px; color: var(--muted); font-weight: 400; }
+    .total-row { display: flex; justify-content: space-between; margin-top: 15px; font-size: 18px; font-weight: 800; border-top: 2px solid #eee; padding-top: 15px; }
+
+    /* DATOS TRANSFERENCIA */
+    .bank-box {
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 20px; margin-top: 25px;
+    }
+    .bank-intro { 
+        font-size: 16px; font-weight: 700; color: #166534; margin-bottom: 15px; 
+        text-align: center; border-bottom: 1px dashed #bbf7d0; padding-bottom: 10px;
+    }
+    .bank-title { font-size: 13px; font-weight: 700; color: #444; margin-bottom: 8px; text-transform:uppercase; letter-spacing:0.5px; }
+    
+    .bank-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
+    .bank-val { font-family: monospace; font-size: 15px; color: #000; background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid #ddd; font-weight:600; }
+    .copy-btn { border: none; background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition:0.2s }
+    .copy-btn:hover { background: #bae6fd; }
+
+    /* BOTONES ACCIÓN */
+    .action-area { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
+    .btn-wa {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #25D366; color: #fff; font-weight: 700; text-decoration: none;
+      padding: 14px; border-radius: 14px; transition: transform .1s;
+    }
+    .btn-wa:hover { background: #20bd5a; }
+    .btn-wa:active { transform: scale(0.98); }
+
+    /* RATING */
+    .rating-area { text-align: center; margin-top: 10px; }
+    .stars { display: inline-flex; gap: 8px; margin: 10px 0; }
+    .star { font-size: 36px; color: #e0e0e0; cursor: pointer; background: none; border: none; transition: color .2s; padding: 0; }
+    .star.active { color: var(--accent); }
+    .fb-textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; resize: vertical; min-height: 80px; margin-top: 10px; }
+    .btn-send { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 99px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    
+    .loader { text-align: center; padding: 40px; color: var(--muted); }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Rhodes">
+      Rhodes Burgers
+    </a>
+    <a href="index.html" class="btn-back">← Menú</a>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div id="loading" class="loader">Cargando pedido...</div>
+
+    <div id="orderContent" style="display:none">
+      <div class="order-header">
+        <div id="statusBadge" class="status-badge st-pending">Cargando...</div>
+        <div id="orderNum" class="order-num">#---</div>
+      </div>
+
+      <h1 id="greeting">¡Gracias!</h1>
+      <p class="subtitle">Tu pedido ha sido recibido correctamente.</p>
+
+      <div class="timeline">
+        <div class="step-item" id="step-pending">
+          <div class="step-dot">1</div>
+          <div class="step-label">Pago</div>
+        </div>
+        <div class="step-item" id="step-accepted">
+          <div class="step-dot">2</div>
+          <div class="step-label">Recibido</div>
+        </div>
+        <div class="step-item" id="step-prep">
+          <div class="step-dot">3</div>
+          <div class="step-label">En preparación</div>
+        </div>
+        <div class="step-item" id="step-ready">
+          <div class="step-dot">4</div>
+          <div class="step-label">Listo</div>
+        </div>
+        <div class="step-item" id="step-done">
+          <div class="step-dot">✓</div>
+          <div class="step-label">Entregado</div>
+        </div>
+      </div>
+
+      <div style="background:#f9f9f9; padding:15px; border-radius:12px; font-size:14px; display:flex; flex-wrap:wrap; gap:15px;">
+        <div><strong>Entrega:</strong> <span id="deliveryMode">Take Away</span></div>
+        <div><strong>Hora:</strong> <span id="lastUpdate">--:--</span></div>
+      </div>
+
+      <div id="transferBox" class="bank-box" style="display:none">
+        <div class="bank-intro">Aceptamos todos los medios de pago 💸</div>
+        <p style="text-align:center; margin-top:0; margin-bottom:15px; font-size:14px; color:#555">
+            Estos son nuestros datos para transferir:
+        </p>
+
+        <div class="bank-row">
+          <span>Alias:</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="bank-val">RhodesBurgers</span>
+            <button class="copy-btn" onclick="copy('RhodesBurgers')">COPIAR</button>
+          </div>
+        </div>
+        <div class="bank-row">
+          <span>CVU:</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="bank-val">0000003100035316561921</span>
+            <button class="copy-btn" onclick="copy('0000003100035316561921')">COPIAR</button>
+          </div>
+        </div>
+        <div class="bank-row">
+          <span>Titular:</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="bank-val">Marco Leonardi</span>
+            <button class="copy-btn" onclick="copy('Marco Leonardi')">COPIAR</button>
+          </div>
+        </div>
+        
+        <p style="font-size:13px; color:#166534; margin-top:15px; margin-bottom:0; text-align:center; font-weight:600; background:#fff; padding:8px; border-radius:8px; border:1px dashed #bbf7d0;">
+          📲 ¡Importante! Enviá el comprobante por WhatsApp indicando tu número de pedido.
+        </p>
+      </div>
+
+      <div class="action-area">
+        <a id="waLink" href="#" target="_blank" class="btn-wa">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.694c.93.513 1.733.701 2.806.701 3.181 0 5.767-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm0 11.763c-.715 0-1.428-.187-2.01-.598l-.144-.101-1.494.391.399-1.457-.093-.148c-.476-.757-.73-1.576-.73-2.416 0-2.579 2.098-4.679 4.677-4.679 4.556 0 4.678 4.679 4.678 4.679 0 2.58-2.098 4.678-4.677 4.678z"/></svg>
+          Enviar comprobante / Consultar
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <aside>
+    <div class="card">
+      <h2>Detalle del pedido</h2>
+      <div id="itemsList">
+        </div>
+      <div id="discountRow" style="display:none; justify-content: space-between; margin-top:10px; color:#16a34a; font-weight:700;">
+         <span>Descuento</span>
+         <span id="discountVal">-$0</span>
+      </div>
+      <div class="total-row">
+        <span>Total</span>
+        <span id="totalPrice">$ 0</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h2>Calificanos</h2>
+      <div class="rating-area">
+        <div class="stars" id="starGroup">
+          <button class="star" data-v="1">★</button>
+          <button class="star" data-v="2">★</button>
+          <button class="star" data-v="3">★</button>
+          <button class="star" data-v="4">★</button>
+          <button class="star" data-v="5">★</button>
+        </div>
+        <textarea id="fbComment" class="fb-textarea" placeholder="¿Qué te pareció?"></textarea>
+        <button id="btnSendFb" class="btn-send" onclick="sendFeedback()">Enviar Opinión</button>
+        <div id="fbResponse" style="margin-top:10px; font-size:13px; color:var(--primary); font-weight:600"></div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig={apiKey:"AIzaSyBbt5YOWDE0ouLn-Ib_iD1yUesok5SEhB8",authDomain:"rhodes-burguers.firebaseapp.com",projectId:"rhodes-burguers",storageBucket:"rhodes-burguers.firebasestorage.app",messagingSenderId:"951646688091",appId:"1:951646688091:web:05db5fadb4150d1fa9c07e"};
+  firebase.initializeApp(firebaseConfig);
+  const db=firebase.firestore();
+
+  const $ = s => document.querySelector(s);
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get('id');
+  const token = urlParams.get('t');
+  const money = n => (Number(n)||0).toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
+  const WHATSAPP = "5491170596483"; 
+
+  // 🔥 PRECIOS DINÁMICOS (Fallback)
+  let PRICES_DB = { patty: 2500, cheddar: 300 };
+
+  // 🔥 LISTENER DE PRECIOS GLOBAL
+  db.collection('config').doc('prices').onSnapshot(doc => {
+      if(doc.exists) {
+          PRICES_DB = doc.data();
+          if(window.cachedOrderData) renderPage(window.cachedOrderData); // Re-render al actualizar precios
+      }
+  });
+
+  const STATUS_MAP = {
+    'pending_payment': { step: 'step-pending', label: 'Pago Pendiente', class: 'st-pending_payment' },
+    'accepted': { step: 'step-accepted', label: 'Recibido', class: 'st-accepted' },
+    'in_prep': { step: 'step-prep', label: 'En preparación', class: 'st-preparing' },
+    'ready': { step: 'step-ready', label: 'Listo para retirar', class: 'st-ready_for_pickup' },
+    'delivered': { step: 'step-done', label: 'Entregado', class: 'st-completed' },
+    'cancelled': { step: '', label: 'Cancelado', class: 'st-cancelled' }
+  };
+
+  function copy(text) {
+    navigator.clipboard.writeText(text).then(()=>{
+        alert("Copiado: " + text);
+    });
+  }
+
+  // Inicializar
+  if(orderId){
+    db.collection("orders").doc(orderId).onSnapshot(doc => {
+      if(doc.exists){
+        window.cachedOrderData = doc.data();
+        renderPage(doc.data());
+      } else {
+        $("#loading").textContent = "Pedido no encontrado.";
+      }
+    }, err => {
+      console.error(err);
+      $("#loading").textContent = "Error de conexión.";
+    });
+  } else {
+    $("#loading").textContent = "Link inválido (falta ID).";
+  }
+
+  function renderPage(data){
+    $("#loading").style.display = 'none';
+    $("#orderContent").style.display = 'block';
+    
+    // Header
+    $("#orderNum").textContent = `#${data.orderNumber}`;
+    $("#greeting").textContent = `¡Hola, ${data.nombre}!`;
+    
+    // Estado
+    const st = data.status || 'accepted';
+    const map = STATUS_MAP[st] || STATUS_MAP['accepted'];
+    
+    // Badge
+    const badge = $("#statusBadge");
+    badge.className = `status-badge ${map.class}`;
+    badge.textContent = map.label;
+
+    // Timeline
+    const steps = ['step-pending', 'step-accepted', 'step-prep', 'step-ready', 'step-done'];
+    const currentIdx = steps.indexOf(map.step);
+    steps.forEach((id, idx) => {
+      const el = document.getElementById(id);
+      el.classList.remove('active', 'done');
+      if(idx < currentIdx) el.classList.add('done');
+      if(idx === currentIdx) el.classList.add('active');
+    });
+
+    // Info extra
+    $("#deliveryMode").textContent = data.entrega === 'take_away' ? 'Retiro por Local' : data.entrega;
+    
+    // FORZAR VISIBILIDAD CAJA PAGO
+    $("#transferBox").style.display = "block";
+    
+    // Hora
+    let timeShow = "--:--";
+    if(data.createdAt) {
+        try {
+            const d = new Date(data.createdAt);
+            timeShow = d.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+        } catch(e){}
+    }
+    $("#lastUpdate").textContent = timeShow;
+
+    // Link WhatsApp
+    const waMsg = `Hola! Soy el pedido #${data.orderNumber} (${data.nombre}). Quería consultar sobre mi estado.`;
+    $("#waLink").href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(waMsg)}`;
+
+    // Render Items
+    const list = $("#itemsList");
+    list.innerHTML = "";
+    if(data.items){
+      data.items.forEach(item => {
+         const extras = [];
+         
+         // 🔥 CÁLCULO PRECIO DINÁMICO RENGLÓN
+         let pPatty = item.extras?.EXTRA_PRICE_PATTY || PRICES_DB.patty || 2500;
+         let pCheddar = item.extras?.EXTRA_PRICE_CHEDDAR || PRICES_DB.cheddar || 300;
+
+         let extrasCost = 0;
+         if(item.extras?.patty) {
+             extras.push(`+${item.extras.patty} carne`);
+             extrasCost += item.extras.patty * pPatty;
+         }
+         if(item.extras?.cheddar) {
+             extras.push(`+${item.extras.cheddar} cheddar`);
+             extrasCost += item.extras.cheddar * pCheddar;
+         }
+         if(item.fries && item.fries.toLowerCase() !== 'sin_papas') {
+             let friesName = item.fries.replace(/_/g, " ");
+             // Capitalize
+             friesName = friesName.charAt(0).toUpperCase() + friesName.slice(1);
+             extras.push(friesName);
+         }
+
+         // Precio unitario total
+         const unitTotal = (item.price || 0) + extrasCost;
+         const lineTotal = unitTotal * (item.qty || 1);
+
+         const html = `
+           <div class="item-row">
+             <div>
+               <div class="item-name">${item.qty}x ${item.name}</div>
+               ${extras.length ? `<span class="item-sub">${extras.join(', ')}</span>` : ''}
+               ${item.notes ? `<span class="item-sub" style="color:#d32f2f">📝 ${item.notes}</span>` : ''}
+             </div>
+             <div style="font-weight:700">$${money(lineTotal)}</div>
+           </div>
+         `;
+         list.insertAdjacentHTML('beforeend', html);
+      });
+    }
+
+    // Descuento
+    if(data.discount > 0) {
+        $("#discountRow").style.display = "flex";
+        $("#discountVal").textContent = `-${money(data.discount)}`;
+    } else {
+        $("#discountRow").style.display = "none";
+    }
+
+    $("#totalPrice").textContent = money(data.total);
+  }
+
+  // Estrellas
+  let ratingVal = 0;
+  document.querySelectorAll('.star').forEach(s => {
+    s.addEventListener('click', function(){
+       ratingVal = this.dataset.v;
+       updateStars();
+    });
+  });
+
+  function updateStars(){
+    document.querySelectorAll('.star').forEach(s => {
+      s.classList.toggle('active', s.dataset.v <= ratingVal);
+    });
+  }
+
+  async function sendFeedback(){
+    if(!ratingVal) { alert("Elegí una calificación primero :)"); return; }
+    const comment = $("#fbComment").value;
+    
+    try {
+      await db.collection("feedback").add({
+        orderId: orderId,
+        rating: ratingVal,
+        comment: comment,
+        date: new Date().toISOString()
+      });
+      $("#btnSendFb").style.display = 'none';
+      $("#fbResponse").textContent = "¡Gracias por tu opinión!";
+    } catch(e) {
+      alert("Error al enviar.");
+    }
+  }
+</script>
+</body>
+</html>
