@@ -88,6 +88,48 @@
     
     /* Styles para los porcentajes pequeños */
     .pct-tag { font-size: 10px; font-weight: 400; margin-left: 4px; opacity: 0.8; }
+
+    /* --- MEJORAS STOCK --- */
+    /* Ocultar flechas del input number para que se vea limpio */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    
+    .qty-control { display: flex; align-items: center; gap: 5px; justify-content: center; }
+    
+    .qty-input { 
+        width: 70px; 
+        text-align: center; 
+        border: 1px solid #cbd5e1; 
+        border-radius: 6px; 
+        padding: 6px; 
+        font-weight: 700; 
+        color: #334155; 
+        outline: none; 
+        transition: 0.2s; 
+        background: #fff;
+    }
+    .qty-input:focus { 
+        border-color: var(--primary); 
+        background: #fffbeb; 
+        box-shadow: 0 0 0 3px rgba(98, 90, 69, 0.1);
+    }
+    
+    .qty-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+    .qty-btn:hover { background: #e2e8f0; color: var(--primary); }
+    .qty-btn:active { transform: scale(0.95); }
   </style>
 </head>
 <body>
@@ -372,41 +414,56 @@
     }
 
     // ==========================================
-    // 1. CARGA DE INVENTARIO
+    // 1. CARGA DE BASE DE DATOS (Nombres Reales)
     // ==========================================
     function loadProductsDB() {
-        // Esta función ahora es menos crítica para "Proporciones" porque usamos la MASTER_LIST,
-        // pero sigue siendo útil para otras cosas.
+        // Obtenemos los productos REALES de la DB para pintar la tabla con 0 ventas al inicio
         db.collection('products').get().then(snap => {
             PRODUCTS_DB = {}; 
             snap.forEach(doc => {
                 const d = doc.data();
+                // Normalizamos el nombre para búsqueda (minúsculas, sin espacios extra)
                 const normName = d.name.toLowerCase().trim();
-                PRODUCTS_DB[normName] = { category: d.category || 'otros', realName: d.name };
+                PRODUCTS_DB[normName] = { 
+                    realName: d.name, 
+                    category: d.category || 'otros' 
+                };
             });
+            // Si ya se cargaron órdenes, actualizamos la tabla
             if(ORDERS.length) window.renderProportions();
         });
     }
 
     // ==========================================
-    // 🔥 2. LÓGICA FINAL: SIMPLE/DOBLE + CANALES + LIMPIEZA NOMBRES
+    // 🔥 2. LÓGICA DINÁMICA: DB + EXTRAS + CANALES
     // ==========================================
     window.renderProportions = function() {
         const body = $('#proportionsBody');
         if (!body) return;
         body.innerHTML = '';
 
-        // 1. LISTA MAESTRA (Tal cual tu menú)
-        const MASTER_LIST = [
-            "CheeseBurger", "CheeseBacon", "Easter Egg", "Core", "Morgan", 
-            "Big John", "Buena", "Mala", "Fea", "Rhodes", "Burguesa", "Pollo Crispy",
-            "Medallón adicional", "Cheddar adicional",
-            "Porción papas fritas", "Porción papas fritas con cheddar", "Porción papas fritas con cheddar y bacon", "Porción nuggets",
-            "Agua", "Coca Cola Original", "Coca Cola Zero", "Sprite", 
-            "Andes Rubia", "Andes Roja", "Aquarius Manzana", "Aquarius Pera", "Aquarius Pomelo"
-        ];
+        const stats = {};
 
-        // Helper para adivinar categoría (Mejorado para detectar burgers correctamente)
+        // PASO 1: Llenar la tabla con TODO lo que hay en la base de datos (ventas = 0)
+        Object.keys(PRODUCTS_DB).forEach(key => {
+            const p = PRODUCTS_DB[key];
+            // Usamos el nombre real para mostrar, pero la key normalizada para buscar
+            // Normalizamos la key limpiando "simple"/"doble" para agrupar burgers
+            let statsKey = key.replace('simple', '').replace('doble', '').trim();
+            
+            if (!stats[statsKey]) {
+                stats[statsKey] = {
+                    name: p.realName.replace(/simple|doble/gi, '').trim(), // Nombre bonito sin variantes
+                    category: p.category,
+                    countSimple: 0,
+                    countDouble: 0,
+                    total: 0, 
+                    web: 0, local: 0, py: 0
+                };
+            }
+        });
+
+        // Helper para categorizar si viene algo nuevo (extra, o producto borrado)
         function getCategory(name) {
             const n = name.toLowerCase();
             const burgerNames = ["cheese", "bacon", "egg", "core", "morgan", "big", "john", "buena", "mala", "fea", "rhodes", "burguesa", "pollo", "crispy"];
@@ -417,37 +474,49 @@
             return 'otros';
         }
 
-        // Inicializamos stats con la lista maestra
-        const stats = {};
-        MASTER_LIST.forEach(item => {
-            stats[item.toLowerCase()] = { 
-                name: item, 
-                category: getCategory(item),
-                countSimple: 0,
-                countDouble: 0,
-                total: 0, 
-                web: 0, local: 0, py: 0
-            };
-        });
-
-        let totalGeneral = 0;
-        let grandTotalWeb = 0, grandTotalLocal = 0, grandTotalPY = 0;
-
-        // Función para limpiar nombres (quita "simple" y "doble" para encontrar la base)
+        // Helper para normalizar nombres de pedidos
         function cleanName(raw) {
             let n = raw.toLowerCase().trim();
-            // ESTO ES CLAVE: Quitamos 'simple' y 'doble' para que coincida con la lista maestra
             n = n.replace('doble', '').replace('simple', '').trim(); 
             n = n.replace(/\s{2,}/g, ' ');
-            
             if(n === 'papas fritas') return 'porción papas fritas';
-            if(n.includes('coca') && n.includes('original')) return 'coca cola original';
-            if(n.includes('coca') && n.includes('zero')) return 'coca cola zero';
-            
+            // Match manual para bebidas comunes si el nombre varía
+            if(n.includes('coca') && n.includes('original')) return 'coca-cola original 500ml'; // Ajustar según DB
             return n;
         }
 
-        // 2. PROCESAR PEDIDOS
+        // Helper para sumar extras
+        let totalGeneral = 0;
+        let grandTotalWeb = 0, grandTotalLocal = 0, grandTotalPY = 0;
+
+        function addToStats(key, niceName, qty, source, isDouble, cat) {
+            // Si no existe (producto nuevo o extra que no está en DB), lo creamos
+            if (!stats[key]) {
+                stats[key] = { 
+                    name: niceName, 
+                    category: cat || getCategory(niceName),
+                    countSimple: 0, countDouble: 0, total: 0, web: 0, local: 0, py: 0 
+                };
+            }
+
+            stats[key].total += qty;
+            stats[key][source] += qty;
+            
+            // Si es hamburguesa y es doble
+            if (stats[key].category === 'hamburguesas' || stats[key].category === 'Hamburguesas') {
+                if (isDouble) stats[key].countDouble += qty;
+                else stats[key].countSimple += qty;
+            } else {
+                stats[key].countSimple += qty;
+            }
+
+            totalGeneral += qty;
+            if(source==='web') grandTotalWeb += qty;
+            if(source==='local') grandTotalLocal += qty;
+            if(source==='py') grandTotalPY += qty;
+        }
+
+        // PASO 2: Procesar Pedidos
         ORDERS.forEach(o => {
             let source = 'local';
             const srcRaw = String(o.source || '').toLowerCase();
@@ -458,54 +527,49 @@
                 const qty = Number(it.qty || 1);
                 const rawName = it.name || "";
                 
-                // Detectamos si es doble ANTES de limpiar el nombre
+                // 1. Ítem Principal
                 const isDouble = rawName.toLowerCase().includes('doble');
-                const baseName = cleanName(rawName);
-
-                // Buscamos coincidencia en la lista maestra
-                let key = MASTER_LIST.find(m => m.toLowerCase() === baseName);
+                let baseName = cleanName(rawName);
                 
-                // Si no existe, usamos el nombre base limpio (para ítems nuevos no listados)
-                if (!key) key = baseName;
-                else key = key.toLowerCase();
+                // Intentar matchear con la DB existente
+                let key = Object.keys(stats).find(k => k === baseName) || baseName;
+                let prettyName = stats[key] ? stats[key].name : (baseName.charAt(0).toUpperCase() + baseName.slice(1));
 
-                // Si es un item nuevo (no estaba en Master List), lo inicializamos
-                if (!stats[key]) {
-                    const niceName = key.charAt(0).toUpperCase() + key.slice(1);
-                    stats[key] = { 
-                        name: niceName, 
-                        category: getCategory(niceName), 
-                        countSimple: 0, countDouble: 0, total: 0, web: 0, local: 0, py: 0 
-                    };
+                addToStats(key, prettyName, qty, source, isDouble, stats[key]?.category);
+
+                // 2. Extras (Dentro del ítem)
+                if (it.extras) {
+                    // Carne Extra
+                    let extraMeat = Number(it.extras.patty || it.extras.carne || it.extras.medallon || 0);
+                    if (extraMeat > 0) {
+                        addToStats("medallon adicional", "Medallón adicional", extraMeat * qty, source, false, 'extras');
+                    }
+                    // Cheddar Extra
+                    let extraCheddar = Number(it.extras.cheddar || 0);
+                    if (extraCheddar > 0) {
+                        addToStats("cheddar adicional", "Cheddar adicional", extraCheddar * qty, source, false, 'extras');
+                    }
                 }
-
-                // Sumamos contadores
-                stats[key].total += qty;
-                stats[key][source] += qty;
-                
-                // Lógica Simple vs Doble (Solo aplica a Hamburguesas realmente)
-                if (stats[key].category === 'hamburguesas') {
-                    if (isDouble) stats[key].countDouble += qty;
-                    else stats[key].countSimple += qty;
-                } else {
-                    // Para bebidas o papas, todo cuenta como "simple/unidad"
-                    stats[key].countSimple += qty;
-                }
-
-                totalGeneral += qty;
-                if(source==='web') grandTotalWeb += qty;
-                if(source==='local') grandTotalLocal += qty;
-                if(source==='py') grandTotalPY += qty;
             });
         });
 
         $('#totalItemsBadge').innerText = `Total Ítems: ${totalGeneral}`;
 
-        // 3. ORDENAR Y RENDERIZAR
+        // PASO 3: Ordenar y Renderizar
+        // Definir orden de categorías
         const catOrder = ['hamburguesas', 'bebidas', 'guarniciones', 'extras', 'otros'];
+        
         const sortedKeys = Object.values(stats).sort((a, b) => {
-            const rankA = catOrder.indexOf(a.category);
-            const rankB = catOrder.indexOf(b.category);
+            let catA = (a.category||'otros').toLowerCase();
+            let catB = (b.category||'otros').toLowerCase();
+            
+            // Normalizar categorías para el sort
+            if(catA.includes('hamburguesa')) catA = 'hamburguesas';
+            if(catB.includes('hamburguesa')) catB = 'hamburguesas';
+
+            const rankA = catOrder.indexOf(catA) === -1 ? 99 : catOrder.indexOf(catA);
+            const rankB = catOrder.indexOf(catB) === -1 ? 99 : catOrder.indexOf(catB);
+            
             if (rankA !== rankB) return rankA - rankB;
             return a.name.localeCompare(b.name);
         });
@@ -513,30 +577,29 @@
         let currentCat = null;
 
         sortedKeys.forEach(s => {
-            if (s.category !== currentCat) {
-                currentCat = s.category;
-                const catHeader = currentCat === 'otros' ? 'OTROS / SIN CLASIFICAR' : currentCat.toUpperCase();
-                body.insertAdjacentHTML('beforeend', `<tr><td colspan="7" class="cat-header">${catHeader}</td></tr>`);
+            let displayCat = (s.category || 'OTROS').toUpperCase();
+            if (displayCat !== currentCat) {
+                currentCat = displayCat;
+                body.insertAdjacentHTML('beforeend', `<tr><td colspan="7" class="cat-header">${currentCat}</td></tr>`);
             }
 
-            // Estilos
             const isZero = s.total === 0;
             const rowStyle = isZero ? 'color:#cbd5e1;' : '';
             const zeroStyle = 'color:#e2e8f0; font-size:11px;';
             const pctClass = isZero ? '' : 'pct-tag';
 
-            // Porcentajes
             const pctWeb = grandTotalWeb > 0 ? ((s.web / grandTotalWeb) * 100).toFixed(1) + '%' : '-';
             const pctLocal = grandTotalLocal > 0 ? ((s.local / grandTotalLocal) * 100).toFixed(1) + '%' : '-';
             const pctPY = grandTotalPY > 0 ? ((s.py / grandTotalPY) * 100).toFixed(1) + '%' : '-';
 
-            // Lógica visual para Simple/Doble
+            // Visualización Simple/Doble
             let simpleCell = `<td style="text-align:center;">${s.countSimple}</td>`;
             let doubleCell = `<td style="text-align:center; color:#b91c1c; font-weight:600; background:#fffafb">${s.countDouble}</td>`;
 
-            if (s.category !== 'hamburguesas') {
-                doubleCell = `<td style="text-align:center; color:#e2e8f0">-</td>`; // No aplica doble
-                simpleCell = `<td style="text-align:center; color:#94a3b8">${s.total}</td>`; // Mostramos total en simple
+            // Si no es hamburguesa, anulamos la columna doble visualmente
+            if (!displayCat.includes('HAMBURGUESA')) {
+                doubleCell = `<td style="text-align:center; color:#e2e8f0">-</td>`; 
+                simpleCell = `<td style="text-align:center; color:${isZero?'#ccc':'#555'}">${s.total}</td>`; 
             } else if (isZero) {
                 simpleCell = `<td style="text-align:center;">-</td>`;
                 doubleCell = `<td style="text-align:center;">-</td>`;
@@ -599,24 +662,64 @@
         });
     };
 
-    // RENDER STOCK
+    // ==========================================
+    // 📦 STOCK MEJORADO (Input manual + Botones)
+    // ==========================================
+    
     window.renderStockTable = function() {
-        const t=$('#searchStock').value.toLowerCase(); const c=$('#filterCat').value;
-        const b=$('#stockTableBody'); b.innerHTML='';
-        INVENTORY.filter(p=>(p.name||"").toLowerCase().includes(t) && (c==='all'||p.category===c)).forEach(p=>{
+        const t = $('#searchStock').value.toLowerCase(); 
+        const c = $('#filterCat').value;
+        const b = $('#stockTableBody'); 
+        b.innerHTML='';
+
+        INVENTORY.filter(p => (p.name||"").toLowerCase().includes(t) && (c==='all'||p.category===c)).forEach(p => {
             let stHtml = `<span class="status-dot st-ok"></span>OK`;
-            if(p.qty<=p.min) stHtml=`<span class="status-dot st-danger"></span>CRIT`; 
-            else if(p.qty<=p.min*1.5) stHtml=`<span class="status-dot st-warn"></span>BAJO`;
+            if(p.qty <= p.min) stHtml=`<span class="status-dot st-danger"></span>CRIT`; 
+            else if(p.qty <= p.min*1.5) stHtml=`<span class="status-dot st-warn"></span>BAJO`;
+            
             let actions = `<button class="btn-icon" onclick="openProductModal('${p.id}')">✏️</button><button class="btn-icon" onclick="deleteItem('inventory','${p.id}')">🗑️</button>`;
             if(p.isSub) actions = `<button class="btn-icon" onclick="openSubRecipeEditor('${p.id}')">🧩</button><button class="btn-icon" onclick="deleteItem('subrecipes','${p.id}')">🗑️</button>`;
-            b.insertAdjacentHTML('beforeend', `<tr><td><b>${p.name}</b></td><td><small>${p.category}</small></td><td><div class="qty-control"><button class="qty-btn" onclick="updStock('${p.id}',-1)">-</button><b>${formatQty(p.qty)}</b><button class="qty-btn" onclick="updStock('${p.id}',1)">+</button><small style="margin-left:5px">${p.unit}</small></div></td><td>${p.min}</td><td>${stHtml}</td><td>${actions}</td></tr>`);
+            
+            // INPUT MEJORADO: Permite escribir o usar botones
+            b.insertAdjacentHTML('beforeend', `
+                <tr>
+                    <td><b>${p.name}</b></td>
+                    <td><small style="background:#f1f5f9; padding:2px 6px; border-radius:4px; border:1px solid #e2e8f0">${p.category}</small></td>
+                    <td>
+                        <div class="qty-control">
+                            <button class="qty-btn" onclick="updStock('${p.id}', -1)">-</button>
+                            <input type="number" class="qty-input" value="${formatQty(p.qty)}" 
+                                   onchange="setStockDirect('${p.id}', this.value)" 
+                                   step="0.001">
+                            <button class="qty-btn" onclick="updStock('${p.id}', 1)">+</button>
+                            <small style="margin-left:5px; color:#94a3b8; font-size:10px">${p.unit}</small>
+                        </div>
+                    </td>
+                    <td>${p.min}</td>
+                    <td>${stHtml}</td>
+                    <td>${actions}</td>
+                </tr>
+            `);
         });
     };
 
+    // Función para escribir directamente el número
+    window.setStockDirect = async (id, val) => {
+        const item = INVENTORY.find(i => i.id === id); if(!item) return;
+        const newQty = Number(val); // Convertir lo escrito a número
+        
+        const col = item.isSub ? 'subrecipes' : 'inventory';
+        
+        // Guardamos en Firebase
+        await db.collection(col).doc(id).update({ qty: newQty });
+        // No necesitamos alert, el input ya muestra el valor nuevo
+    };
+
+    // Función modificada para los botones + y -
     window.updStock = (id, v) => {
         const item = INVENTORY.find(i => i.id === id); if(!item) return;
-        const col = item.isSub ? 'subrecipes' : 'inventory';
-        db.collection(col).doc(id).update({ qty: Number(item.qty || 0) + v });
+        const newQty = Number(item.qty || 0) + v;
+        window.setStockDirect(id, newQty);
     };
 
     // RECETAS Y SUBRECETAS
