@@ -4,60 +4,164 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel - Nuestras Finanzas</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* Diseño general estilo dashboard profesional */
     body {
       font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f8fafc;
+      background-color: #f0f4f8;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      color: #334155;
     }
-    .header {
+    .navbar {
+      background-color: #ffffff;
+      padding: 15px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: white;
-      padding: 15px 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
+    .navbar h2 { margin: 0; color: #0f172a; }
     .btn-logout {
-      background-color: #ef4444;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
+      background-color: #f1f5f9; color: #64748b; border: none; padding: 10px 20px;
+      border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
-    .btn-logout:hover {
-      background-color: #dc2626;
+    .btn-logout:hover { background-color: #e2e8f0; color: #ef4444; }
+
+    .container {
+      max-width: 1200px; margin: 30px auto; padding: 0 20px;
+      display: grid; grid-template-columns: 1fr 2fr; gap: 20px;
     }
-    .dashboard-content {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      text-align: center;
-      min-height: 300px;
+
+    /* Tarjetas de Resumen */
+    .summary-cards {
+      grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .card {
+      background: #ffffff; padding: 20px; border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column;
+    }
+    .card h3 { margin: 0 0 10px 0; font-size: 14px; color: #64748b; text-transform: uppercase; }
+    .card .amount { font-size: 28px; font-weight: bold; }
+    .text-green { color: #10b981; }
+    .text-red { color: #ef4444; }
+    .text-blue { color: #3b82f6; }
+
+    /* Secciones principales */
+    .section-card {
+      background: #ffffff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+    .section-title { margin-top: 0; font-size: 18px; color: #0f172a; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;}
+
+    /* Formulario */
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 13px; color: #64748b; margin-bottom: 5px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; outline: none;
+    }
+    .btn-submit {
+      width: 100%; background-color: #2563eb; color: white; border: none; padding: 14px;
+      border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 10px;
+    }
+    .btn-submit:hover { background-color: #1d4ed8; }
+
+    /* Lista de transacciones */
+    .transaction-list { max-height: 400px; overflow-y: auto; }
+    .transaction-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .transaction-item:last-child { border-bottom: none; }
+    .t-info strong { display: block; color: #0f172a; font-size: 15px;}
+    .t-info small { color: #64748b; font-size: 12px;}
+    .t-amount { font-weight: bold; }
+
+    /* Responsivo para celulares */
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+      .summary-cards { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h2>📊 Resumen Financiero</h2>
-    <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+  <div class="navbar">
+    <h2>Control de Finanzas 🪙</h2>
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <span id="user-email" style="font-size: 14px; color: #64748b;">Cargando...</span>
+      <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+    </div>
   </div>
 
-  <div class="dashboard-content">
-    <h3>¡Bienvenido al panel!</h3>
-    <p>Aquí pronto veremos los gráficos, ingresos y gastos...</p>
+  <div class="container">
+    <div class="summary-cards">
+      <div class="card">
+        <h3>Ingresos Totales</h3>
+        <span class="amount text-green" id="total-ingresos">$0</span>
+      </div>
+      <div class="card">
+        <h3>Gastos Totales</h3>
+        <span class="amount text-red" id="total-gastos">$0</span>
+      </div>
+      <div class="card">
+        <h3>Saldo Actual</h3>
+        <span class="amount text-blue" id="saldo-actual">$0</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <div class="section-card">
+        <h3 class="section-title">Nueva Transacción</h3>
+        <form id="transaction-form">
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="tipo" required>
+              <option value="gasto">Gasto</option>
+              <option value="ingreso">Ingreso</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Monto ($)</label>
+            <input type="number" id="monto" placeholder="Ej: 50000" required>
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <select id="categoria" required>
+              <option value="Sueldo">Sueldo / Honorarios</option>
+              <option value="Supermercado">Supermercado / Comida</option>
+              <option value="Vivienda">Vivienda / Servicios</option>
+              <option value="Transporte">Transporte / Nafta</option>
+              <option value="Salidas">Salidas / Ocio</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Descripción corta</label>
+            <input type="text" id="descripcion" placeholder="Ej: Compra Coto" required>
+          </div>
+          <button type="submit" class="btn-submit">Guardar Transacción</button>
+        </form>
+      </div>
+
+      <div class="section-card">
+        <h3 class="section-title">Gastos por Categoría</h3>
+        <canvas id="gastosChart"></canvas>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h3 class="section-title">Historial Reciente</h3>
+      <div class="transaction-list" id="transaction-list">
+        <p style="text-align: center; color: #94a3b8; margin-top: 20px;">Cargando movimientos...</p>
+      </div>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAmna4GUHScm-U-dUDtiHVwQ_epL2qkRyU",
@@ -70,23 +174,142 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    // 1. Proteger la ruta: Si no hay usuario, lo devolvemos al index
+    let currentUser = null;
+    let miGrafico = null; // Variable para guardar el gráfico y poder actualizarlo
+
+    // 1. Verificar sesión
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         window.location.href = "index.html";
+      } else {
+        currentUser = user;
+        document.getElementById('user-email').innerText = user.email;
+        iniciarEscuchaDatos(); // Solo buscamos datos si el usuario está logueado
       }
     });
 
-    // 2. Lógica para cerrar sesión
-    const btnLogout = document.getElementById('btn-logout');
-    btnLogout.addEventListener('click', () => {
-      signOut(auth).then(() => {
-        // Al cerrar sesión, el onAuthStateChanged de arriba lo detectará y lo mandará al login
-      }).catch((error) => {
-        alert("Error al cerrar sesión");
-      });
+    // 2. Cerrar sesión
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      signOut(auth);
     });
+
+    // 3. Guardar nueva transacción en Firestore
+    document.getElementById('transaction-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const tipo = document.getElementById('tipo').value;
+      const monto = parseFloat(document.getElementById('monto').value);
+      const categoria = document.getElementById('categoria').value;
+      const descripcion = document.getElementById('descripcion').value;
+
+      try {
+        await addDoc(collection(db, "transactions"), {
+          userId: currentUser.uid,
+          userEmail: currentUser.email, // Guardamos el email para saber quién lo cargó
+          tipo: tipo,
+          monto: monto,
+          categoria: categoria,
+          descripcion: descripcion,
+          fecha: new Date().getTime() // Usamos timestamp para ordenar fácil
+        });
+        
+        // Limpiamos el formulario
+        document.getElementById('monto').value = '';
+        document.getElementById('descripcion').value = '';
+      } catch (error) {
+        alert("Error al guardar: " + error.message);
+      }
+    });
+
+    // 4. Escuchar datos en TIEMPO REAL y actualizar la interfaz
+    function iniciarEscuchaDatos() {
+      const q = query(collection(db, "transactions"), orderBy("fecha", "desc"));
+      
+      onSnapshot(q, (snapshot) => {
+        const listaContenedor = document.getElementById('transaction-list');
+        listaContenedor.innerHTML = ''; // Limpiamos la lista
+
+        let totalIngresos = 0;
+        let totalGastos = 0;
+        let gastosPorCategoria = {}; // Para armar el gráfico
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          
+          // --- Cálculos Matemáticos ---
+          if (data.tipo === 'ingreso') {
+            totalIngresos += data.monto;
+          } else {
+            totalGastos += data.monto;
+            // Sumamos los gastos para el gráfico de torta
+            gastosPorCategoria[data.categoria] = (gastosPorCategoria[data.categoria] || 0) + data.monto;
+          }
+
+          // --- Dibujar en el Historial ---
+          const fechaFormateada = new Date(data.fecha).toLocaleDateString('es-AR');
+          const colorMonto = data.tipo === 'ingreso' ? 'text-green' : 'text-red';
+          const signo = data.tipo === 'ingreso' ? '+' : '-';
+
+          listaContenedor.innerHTML += `
+            <div class="transaction-item">
+              <div class="t-info">
+                <strong>${data.descripcion}</strong>
+                <small>${data.categoria} • ${fechaFormateada} • 👤 ${data.userEmail.split('@')[0]}</small>
+              </div>
+              <div class="t-amount ${colorMonto}">
+                ${signo}$${data.monto.toLocaleString('es-AR')}
+              </div>
+            </div>
+          `;
+        });
+
+        // Si no hay datos
+        if (snapshot.empty) {
+          listaContenedor.innerHTML = '<p style="text-align: center; color: #94a3b8;">Aún no hay movimientos.</p>';
+        }
+
+        // --- Actualizar Tarjetas ---
+        document.getElementById('total-ingresos').innerText = `$${totalIngresos.toLocaleString('es-AR')}`;
+        document.getElementById('total-gastos').innerText = `$${totalGastos.toLocaleString('es-AR')}`;
+        document.getElementById('saldo-actual').innerText = `$${(totalIngresos - totalGastos).toLocaleString('es-AR')}`;
+
+        // --- Actualizar Gráfico ---
+        actualizarGrafico(gastosPorCategoria);
+      });
+    }
+
+    // 5. Configuración del Gráfico (Chart.js)
+    function actualizarGrafico(datosGastos) {
+      const ctx = document.getElementById('gastosChart').getContext('2d');
+      
+      const etiquetas = Object.keys(datosGastos);
+      const valores = Object.values(datosGastos);
+
+      // Si ya existe un gráfico, lo destruimos para volver a dibujarlo actualizado
+      if (miGrafico) { miGrafico.destroy(); }
+
+      miGrafico = new Chart(ctx, {
+        type: 'doughnut', // Gráfico de torta hueco
+        data: {
+          labels: etiquetas.length > 0 ? etiquetas : ['Sin gastos'],
+          datasets: [{
+            data: valores.length > 0 ? valores : [1],
+            backgroundColor: [
+              '#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
   </script>
 </body>
 </html>
