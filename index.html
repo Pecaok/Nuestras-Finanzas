@@ -5,31 +5,147 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nuestras Finanzas</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-    input, button { width: 100%; margin-bottom: 10px; padding: 10px; box-sizing: border-box; }
+    /* Estilos generales y fondo */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 40%, #a491f0 100%);
+    }
+
+    /* Tarjeta principal */
+    .login-card {
+      background-color: #ffffff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    /* Encabezados */
+    .login-card h2 {
+      margin: 0 0 5px 0;
+      color: #0f172a;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .login-card p {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    /* Contenedor de inputs con etiquetas flotantes */
+    .input-group {
+      position: relative;
+      margin-bottom: 25px;
+      text-align: left;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 20px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 30px;
+      outline: none;
+      font-size: 15px;
+      color: #334155;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+      background-color: transparent;
+    }
+
+    .input-group input:focus {
+      border-color: #2563eb;
+    }
+
+    /* La etiqueta cortando el borde */
+    .input-group label {
+      position: absolute;
+      top: -8px;
+      left: 18px;
+      background-color: #ffffff;
+      padding: 0 6px;
+      font-size: 12px;
+      color: #475569;
+      pointer-events: none;
+    }
+
+    /* Botones */
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      background-color: #e2e8f0;
+      color: #3b82f6;
+      border: none;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #cbd5e1;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Control de Finanzas</h2>
+  <div class="login-card">
+    <h2>Control de Finanzas 🪙</h2>
     <p>Ingresa tus datos para continuar</p>
     
-    <input type="email" id="email" placeholder="Correo electrónico (ej: ignaciowollenberg@gmail.com)">
-    <input type="password" id="password" placeholder="Contraseña">
+    <div class="input-group">
+      <input type="email" id="email">
+      <label for="email">Correo electrónico</label>
+    </div>
     
-    <button id="btn-login">Iniciar Sesión</button>
-    <button id="btn-register">Registrar Usuario Nuevo</button>
+    <div class="input-group">
+      <input type="password" id="password">
+      <label for="password">Contraseña</label>
+    </div>
+    
+    <button id="btn-login" class="btn-primary">Iniciar Sesión</button>
+    <button id="btn-register" class="btn-secondary">Registrar Usuario Nuevo</button>
   </div>
 
   <script type="module">
-    // 1. Importamos la app principal, Autenticación y Base de Datos
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-    // 2. Tu configuración exacta
     const firebaseConfig = {
       apiKey: "AIzaSyAmna4GUHScm-U-dUDtiHVwQ_epL2qkRyU",
       authDomain: "nuestras-finanzas-813f2.firebaseapp.com",
@@ -40,36 +156,43 @@
       measurementId: "G-WG9XXFTPCJ"
     };
 
-    // 3. Inicializamos los servicios
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // 4. Capturamos los elementos del HTML
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const btnRegister = document.getElementById('btn-register');
     const btnLogin = document.getElementById('btn-login');
 
-    // 5. Lógica para Registrarse
     btnRegister.addEventListener('click', () => {
+      if(!emailInput.value || !passwordInput.value) {
+        alert("Por favor, completa ambos campos.");
+        return;
+      }
       createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
         .then((userCredential) => {
           alert("¡Excelente! Usuario registrado: " + userCredential.user.email);
+          emailInput.value = '';
+          passwordInput.value = '';
         })
         .catch((error) => {
           alert("Hubo un error al registrar: " + error.message);
         });
     });
 
-    // 6. Lógica para Iniciar Sesión
     btnLogin.addEventListener('click', () => {
+      if(!emailInput.value || !passwordInput.value) {
+        alert("Por favor, completa ambos campos.");
+        return;
+      }
       signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
         .then((userCredential) => {
           alert("¡Sesión iniciada correctamente! Bienvenido.");
+          // Aquí luego agregaremos la redirección al panel de control
         })
         .catch((error) => {
-          alert("Error al iniciar sesión: " + error.message);
+          alert("Error al iniciar sesión. Revisa tus datos.");
         });
     });
   </script>
