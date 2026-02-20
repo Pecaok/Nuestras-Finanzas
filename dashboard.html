@@ -6,7 +6,6 @@
   <title>Panel - Nuestras Finanzas</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Diseño general y animaciones */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -18,7 +17,6 @@
       color: #2c3e50;
     }
 
-    /* Barra de navegación colorida */
     .navbar {
       background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
       padding: 20px 40px;
@@ -37,12 +35,11 @@
     .btn-logout:hover { background-color: #ef4444; border-color: #ef4444; }
 
     .container {
-      max-width: 1300px; margin: 40px auto; padding: 0 20px;
-      display: grid; grid-template-columns: 1fr 2fr; gap: 30px;
+      max-width: 1400px; margin: 40px auto; padding: 0 20px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
       animation: fadeIn 0.8s ease-out;
     }
 
-    /* Tarjetas de Resumen (4 ahora) */
     .summary-cards {
       grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
     }
@@ -60,13 +57,16 @@
     .card-inversiones { border-top-color: #8b5cf6; } .card-inversiones .amount { color: #8b5cf6; }
     .card-saldo { border-top-color: #3b82f6; } .card-saldo .amount { color: #3b82f6; }
 
-    /* Secciones principales */
     .section-card {
       background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
     .section-title { margin-top: 0; font-size: 20px; color: #2c3e50; margin-bottom: 25px; font-weight: 700;}
 
-    /* Formulario Limpio (Sin textos adentro) */
+    /* Contenedor especial para los dos gráficos */
+    .graficos-container {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;
+    }
+
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; font-size: 14px; color: #34495e; margin-bottom: 8px; font-weight: 600; }
     .form-group input, .form-group select {
@@ -83,7 +83,6 @@
     }
     .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
 
-    /* Lista de transacciones animada */
     .transaction-list { max-height: 500px; overflow-y: auto; padding-right: 10px; }
     .transaction-list::-webkit-scrollbar { width: 8px; }
     .transaction-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -95,13 +94,14 @@
     }
     .transaction-item:hover { background: #f8fafc; }
     .t-info strong { display: block; color: #1e293b; font-size: 16px; margin-bottom: 4px;}
-    .t-info small { color: #64748b; font-size: 13px; display: flex; gap: 8px; align-items: center;}
+    .t-info small { color: #64748b; font-size: 13px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;}
     .badge { padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #e2e8f0; }
     .t-amount { font-weight: 800; font-size: 18px; }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1024px) {
       .container { grid-template-columns: 1fr; }
       .summary-cards { grid-template-columns: repeat(2, 1fr); }
+      .graficos-container { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -126,7 +126,7 @@
         <span class="amount" id="total-gastos">$0</span>
       </div>
       <div class="card card-inversiones">
-        <h3>Inversiones</h3>
+        <h3>Portafolio (Inversiones)</h3>
         <span class="amount" id="total-inversiones">$0</span>
       </div>
       <div class="card card-saldo">
@@ -137,53 +137,59 @@
 
     <div style="display: flex; flex-direction: column; gap: 30px;">
       <div class="section-card">
-        <h3 class="section-title">Nueva Transacción</h3>
+        <h3 class="section-title">Nuevo Movimiento</h3>
         <form id="transaction-form">
-          <div class="form-group">
-            <label>Tipo de Movimiento</label>
-            <select id="tipo" required>
-              <option value="ingreso">Ingreso</option>
-              <option value="gasto">Gasto</option>
-              <option value="inversion">Inversión</option>
-            </select>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label>Tipo</label>
+              <select id="tipo" required>
+                <option value="ingreso">Ingreso</option>
+                <option value="gasto">Gasto</option>
+                <option value="inversion">Inversión</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Categoría</label>
+              <select id="categoria" required>
+                </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Monto</label>
-            <input type="number" id="monto" required>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label>Monto</label>
+              <input type="number" id="monto" required>
+            </div>
+            <div class="form-group">
+              <label>Método de Pago</label>
+              <select id="metodoPago" required>
+                <option value="Mercado Pago">Mercado Pago</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia Bancaria</option>
+                <option value="Tarjeta de Débito">Tarjeta de Débito</option>
+                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                <option value="Exchange (Binance, etc)">Exchange (Binance/Broker)</option>
+              </select>
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Categoría</label>
-            <select id="categoria" required>
-              <option value="Sueldo">Sueldo / Honorarios</option>
-              <option value="Supermercado">Supermercado / Comida</option>
-              <option value="Vivienda">Vivienda / Servicios</option>
-              <option value="Transporte">Transporte / Nafta</option>
-              <option value="Salidas">Salidas / Ocio</option>
-              <option value="Cripto/Acciones">Cripto / Acciones</option>
-              <option value="Otros">Otros</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Método de Pago</label>
-            <select id="metodoPago" required>
-              <option value="Mercado Pago">Mercado Pago</option>
-              <option value="Efectivo">Efectivo</option>
-              <option value="Transferencia">Transferencia Bancaria</option>
-              <option value="Tarjeta de Débito">Tarjeta de Débito</option>
-              <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Descripción</label>
-            <input type="text" id="descripcion" required>
+            <label>Descripción corta</label>
+            <input type="text" id="descripcion" placeholder="Ej: Compra mensual, 100 USDT, etc." required>
           </div>
           <button type="submit" class="btn-submit">Registrar Movimiento</button>
         </form>
       </div>
 
-      <div class="section-card">
-        <h3 class="section-title">Distribución de Gastos</h3>
-        <canvas id="gastosChart"></canvas>
+      <div class="graficos-container">
+        <div class="section-card" style="padding: 20px;">
+          <h3 class="section-title" style="font-size: 16px; text-align: center;">Distribución de Gastos</h3>
+          <canvas id="gastosChart"></canvas>
+        </div>
+        <div class="section-card" style="padding: 20px;">
+          <h3 class="section-title" style="font-size: 16px; text-align: center;">Composición del Portafolio</h3>
+          <canvas id="inversionesChart"></canvas>
+        </div>
       </div>
     </div>
 
@@ -213,7 +219,32 @@
     const db = getFirestore(app);
 
     let currentUser = null;
-    let miGrafico = null;
+    let graficoGastos = null;
+    let graficoInversiones = null;
+
+    // --- LÓGICA DE CATEGORÍAS DINÁMICAS ---
+    const tipoSelect = document.getElementById('tipo');
+    const categoriaSelect = document.getElementById('categoria');
+
+    const opcionesCategorias = {
+      ingreso: ['Sueldo / Honorarios', 'Ventas', 'Regalo', 'Otros Ingresos'],
+      gasto: ['Supermercado / Comida', 'Vivienda / Servicios', 'Transporte / Nafta', 'Salidas / Ocio', 'Educación', 'Otros Gastos'],
+      inversion: ['Criptomonedas (USDT/BTC)', 'Acciones / CEDEARs', 'Dólares (MEP/Blue)', 'Plazo Fijo', 'Fondos (FCI)']
+    };
+
+    tipoSelect.addEventListener('change', () => {
+      const seleccion = tipoSelect.value;
+      categoriaSelect.innerHTML = '';
+      opcionesCategorias[seleccion].forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        categoriaSelect.appendChild(option);
+      });
+    });
+    // Disparar el evento al cargar para que se llenen las opciones de "Ingreso"
+    tipoSelect.dispatchEvent(new Event('change'));
+    // --------------------------------------
 
     onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -264,23 +295,26 @@
 
         let totalIngresos = 0; let totalGastos = 0; let totalInversiones = 0;
         let gastosPorCategoria = {}; 
+        let inversionesPorCategoria = {}; // Nuevo objeto para guardar data de inversiones
 
         snapshot.forEach((doc) => {
           const data = doc.data();
           
-          if (data.tipo === 'ingreso') { totalIngresos += data.monto; } 
-          else if (data.tipo === 'gasto') { 
+          if (data.tipo === 'ingreso') { 
+            totalIngresos += data.monto; 
+          } else if (data.tipo === 'gasto') { 
             totalGastos += data.monto; 
             gastosPorCategoria[data.categoria] = (gastosPorCategoria[data.categoria] || 0) + data.monto;
+          } else if (data.tipo === 'inversion') { 
+            totalInversiones += data.monto; 
+            inversionesPorCategoria[data.categoria] = (inversionesPorCategoria[data.categoria] || 0) + data.monto;
           }
-          else if (data.tipo === 'inversion') { totalInversiones += data.monto; }
 
           const fechaFormateada = new Date(data.fecha).toLocaleDateString('es-AR');
           
-          let colorClass = 'text-green'; let signo = '+';
-          if(data.tipo === 'gasto') { colorClass = 'card-gastos'; signo = '-'; }
-          if(data.tipo === 'inversion') { colorClass = 'card-inversiones'; signo = '↑'; }
-          if(data.tipo === 'ingreso') { colorClass = 'card-ingresos'; }
+          let colorClass = 'text-green'; let signo = '+'; let colorHex = '#10b981';
+          if(data.tipo === 'gasto') { colorClass = 'card-gastos'; signo = '-'; colorHex = '#ef4444';}
+          if(data.tipo === 'inversion') { colorClass = 'card-inversiones'; signo = '↑'; colorHex = '#8b5cf6';}
 
           listaContenedor.innerHTML += `
             <div class="transaction-item">
@@ -293,7 +327,7 @@
                   <span>👤 ${data.userEmail.split('@')[0]}</span>
                 </small>
               </div>
-              <div class="t-amount ${colorClass} .amount" style="color: ${data.tipo==='gasto'?'#ef4444':data.tipo==='ingreso'?'#10b981':'#8b5cf6'}">
+              <div class="t-amount ${colorClass}" style="color: ${colorHex};">
                 ${signo}$${data.monto.toLocaleString('es-AR')}
               </div>
             </div>
@@ -305,36 +339,61 @@
         document.getElementById('total-ingresos').innerText = `$${totalIngresos.toLocaleString('es-AR')}`;
         document.getElementById('total-gastos').innerText = `$${totalGastos.toLocaleString('es-AR')}`;
         document.getElementById('total-inversiones').innerText = `$${totalInversiones.toLocaleString('es-AR')}`;
-        // El saldo disponible es Ingresos menos Gastos menos Inversiones (porque esa plata la moviste a otro lado)
         document.getElementById('saldo-actual').innerText = `$${(totalIngresos - totalGastos - totalInversiones).toLocaleString('es-AR')}`;
 
-        actualizarGrafico(gastosPorCategoria);
+        // Llamamos a las dos funciones para dibujar ambos gráficos
+        dibujarGraficoGastos(gastosPorCategoria);
+        dibujarGraficoInversiones(inversionesPorCategoria);
       });
     }
 
-    function actualizarGrafico(datosGastos) {
+    // Función para Gráfico de Gastos
+    function dibujarGraficoGastos(datosGastos) {
       const ctx = document.getElementById('gastosChart').getContext('2d');
       const etiquetas = Object.keys(datosGastos);
       const valores = Object.values(datosGastos);
 
-      if (miGrafico) { miGrafico.destroy(); }
+      if (graficoGastos) { graficoGastos.destroy(); }
 
-      miGrafico = new Chart(ctx, {
+      graficoGastos = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: etiquetas.length > 0 ? etiquetas : ['Sin gastos'],
           datasets: [{
             data: valores.length > 0 ? valores : [1],
-            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899'],
-            borderWidth: 0,
-            hoverOffset: 10
+            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#ec4899', '#f43f5e', '#fb923c'],
+            borderWidth: 0, hoverOffset: 10
           }]
         },
         options: {
-          responsive: true,
-          plugins: { legend: { position: 'bottom', labels: { font: { family: "'Segoe UI', sans-serif" } } } },
-          cutout: '70%',
-          animation: { animateScale: true, animateRotate: true }
+          responsive: true, cutout: '75%',
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    // Función exclusiva para Gráfico de Inversiones
+    function dibujarGraficoInversiones(datosInversiones) {
+      const ctx = document.getElementById('inversionesChart').getContext('2d');
+      const etiquetas = Object.keys(datosInversiones);
+      const valores = Object.values(datosInversiones);
+
+      if (graficoInversiones) { graficoInversiones.destroy(); }
+
+      graficoInversiones = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: etiquetas.length > 0 ? etiquetas : ['Sin inversiones'],
+          datasets: [{
+            data: valores.length > 0 ? valores : [1],
+            // Usamos una paleta de colores diferente (morados, verdes, dorados) para diferenciar del gasto
+            backgroundColor: ['#8b5cf6', '#10b981', '#eab308', '#6366f1', '#14b8a6', '#84cc16'],
+            borderWidth: 0, hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true, cutout: '75%',
+          plugins: { legend: { position: 'bottom' } }
         }
       });
     }
