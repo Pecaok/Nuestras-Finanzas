@@ -16,21 +16,13 @@
       justify-content: space-between; align-items: center; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideDown 0.5s ease-out;
     }
     .navbar h2 { margin: 0; font-size: 22px; letter-spacing: 1px; }
-    .btn-logout {
-      background-color: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4);
-      padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; transition: all 0.3s;
-    }
+    .btn-logout { background-color: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
     .btn-logout:hover { background-color: #ef4444; border-color: #ef4444; }
 
-    .container {
-      max-width: 1400px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; animation: fadeIn 0.8s ease-out;
-    }
+    .container { max-width: 1400px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; animation: fadeIn 0.8s ease-out; }
 
     .summary-cards { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .card {
-      background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: flex; flex-direction: column;
-      transition: transform 0.3s ease; border-top: 5px solid transparent; position: relative; overflow: hidden;
-    }
+    .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: transform 0.3s ease; border-top: 5px solid transparent; position: relative; overflow: hidden; }
     .card:hover { transform: translateY(-5px); }
     .card h3 { margin: 0 0 10px 0; font-size: 13px; color: #7f8c8d; text-transform: uppercase; font-weight: 700; }
     .card .amount { font-size: 32px; font-weight: 800; z-index: 1; }
@@ -40,16 +32,11 @@
     .card-inversiones { border-top-color: #8b5cf6; } .card-inversiones .amount { color: #8b5cf6; }
     .card-saldo { border-top-color: #3b82f6; } .card-saldo .amount { color: #3b82f6; }
 
-    /* Estilos del banner de proyección */
-    .proyeccion-banner {
-      grid-column: 1 / -1; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white;
-      padding: 25px 30px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
+    .proyeccion-banner { grid-column: 1 / -1; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 25px 30px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .proyeccion-info h3 { margin: 0 0 5px 0; font-size: 18px; color: #38bdf8; }
     .proyeccion-info p { margin: 0; font-size: 14px; color: #cbd5e1; }
     .proyeccion-monto { font-size: 36px; font-weight: 800; color: #10b981; }
-    .proyeccion-alerta { color: #ef4444; } /* Si proyecta quedar en negativo */
+    .proyeccion-alerta { color: #ef4444; } 
 
     .section-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
     .section-title { margin-top: 0; font-size: 20px; color: #2c3e50; margin-bottom: 25px; font-weight: 700;}
@@ -57,35 +44,34 @@
 
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; font-size: 14px; color: #34495e; margin-bottom: 8px; font-weight: 600; }
-    .form-group input, .form-group select {
-      width: 100%; padding: 14px; border: 2px solid #ecf0f1; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 15px; transition: 0.3s; background-color: #fcfcfc;
-    }
+    .form-group input, .form-group select { width: 100%; padding: 14px; border: 2px solid #ecf0f1; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 15px; transition: 0.3s; background-color: #fcfcfc; }
     .form-group input:focus, .form-group select:focus { border-color: #3b82f6; background-color: white;}
     
-    .btn-submit {
-      width: 100%; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-    }
+    .btn-submit { width: 100%; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
     .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
 
     .transaction-list { max-height: 400px; overflow-y: auto; padding-right: 10px; margin-bottom: 30px; }
     .transaction-list::-webkit-scrollbar { width: 8px; }
     .transaction-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     
-    .transaction-item {
-      display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f1f5f9; animation: fadeIn 0.5s ease-out; border-radius: 10px; transition: 0.2s;
-    }
+    .transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f1f5f9; animation: fadeIn 0.5s ease-out; border-radius: 10px; transition: 0.2s; }
     .transaction-item:hover { background: #f8fafc; }
     .t-info strong { display: block; color: #1e293b; font-size: 16px; margin-bottom: 4px;}
     .t-info small { color: #64748b; font-size: 13px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;}
     .badge { padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #e2e8f0; }
+    .badge-venta { background: #bae6fd; color: #0369a1; }
+    .badge-ajuste { background: #fef08a; color: #854d0e; }
     .t-amount { font-weight: 800; font-size: 18px; }
 
-    /* Tabla de inversiones */
     .tabla-inversiones { width: 100%; border-collapse: collapse; text-align: left; }
     .tabla-inversiones th { background-color: #f8fafc; color: #475569; padding: 12px; font-size: 13px; text-transform: uppercase; border-radius: 8px; }
     .tabla-inversiones td { padding: 15px 12px; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-weight: 600; }
     .td-simbolo { display: flex; align-items: center; gap: 10px; }
     .simbolo-icon { background: #8b5cf6; color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; }
+    
+    /* Botón de actualizar precio en la tabla */
+    .btn-actualizar { background: #e0f2fe; color: #0284c7; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+    .btn-actualizar:hover { background: #bae6fd; }
 
     @media (max-width: 1024px) {
       .container { grid-template-columns: 1fr; }
@@ -116,11 +102,11 @@
         <span class="amount" id="total-gastos">$0</span>
       </div>
       <div class="card card-inversiones">
-        <h3>Capital Invertido</h3>
+        <h3>Valor del Portafolio</h3>
         <span class="amount" id="total-inversiones">$0</span>
       </div>
       <div class="card card-saldo">
-        <h3>Saldo Disponible</h3>
+        <h3>Saldo Disponible (Caja)</h3>
         <span class="amount" id="saldo-actual">$0</span>
       </div>
     </div>
@@ -145,7 +131,8 @@
               <select id="tipo" required>
                 <option value="ingreso">Ingreso</option>
                 <option value="gasto">Gasto</option>
-                <option value="inversion">Inversión</option>
+                <option value="inversion">Compra de Inversión</option>
+                <option value="venta_inversion">Venta de Inversión</option>
               </select>
             </div>
             <div class="form-group">
@@ -156,28 +143,27 @@
           
           <div id="campos-activos" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="form-group">
-              <label>Símbolo del Activo</label>
-              <input type="text" id="activo-simbolo" placeholder="Ej: BTC, SPY, USDT">
+              <label>Símbolo (Ej: AAPL)</label>
+              <input type="text" id="activo-simbolo" placeholder="Ej: AAPL, SPY, AL30">
             </div>
             <div class="form-group">
-              <label>Cantidad Adquirida</label>
-              <input type="number" step="any" id="activo-cantidad" placeholder="Ej: 0.05">
+              <label id="label-cantidad">Cantidad Adquirida</label>
+              <input type="text" inputmode="decimal" id="activo-cantidad" placeholder="Ej: 5,5">
             </div>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="form-group">
-              <label>Monto Total ($)</label>
-              <input type="number" id="monto" required>
+              <label id="label-monto">Monto Total ($)</label>
+              <input type="text" inputmode="decimal" id="monto" placeholder="Ej: 50000" required>
             </div>
             <div class="form-group">
               <label>Método de Pago</label>
               <select id="metodoPago" required>
+                <option value="Ualá">Ualá</option>
                 <option value="Mercado Pago">Mercado Pago</option>
                 <option value="Efectivo">Efectivo</option>
-                <option value="Transferencia">Transferencia Bancaria</option>
-                <option value="Tarjeta de Débito">Tarjeta de Débito</option>
-                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
                 <option value="Exchange">Exchange (Binance/Broker)</option>
               </select>
             </div>
@@ -185,7 +171,7 @@
 
           <div class="form-group">
             <label>Descripción corta</label>
-            <input type="text" id="descripcion" placeholder="Ej: Compra mensual, 100 USDT, etc." required>
+            <input type="text" id="descripcion" placeholder="Ej: Compra CEDEAR Apple" required>
           </div>
           <button type="submit" class="btn-submit">Guardar en Base de Datos</button>
         </form>
@@ -197,7 +183,7 @@
           <canvas id="gastosChart"></canvas>
         </div>
         <div class="section-card" style="padding: 20px;">
-          <h3 class="section-title" style="font-size: 16px; text-align: center;">Distribución Inversiones</h3>
+          <h3 class="section-title" style="font-size: 16px; text-align: center;">Composición del Portafolio</h3>
           <canvas id="inversionesChart"></canvas>
         </div>
       </div>
@@ -206,13 +192,14 @@
     <div style="display: flex; flex-direction: column; gap: 30px;">
       
       <div class="section-card">
-        <h3 class="section-title">Mis Activos Acumulados</h3>
+        <h3 class="section-title">Mis Activos (Ualá / Brokers)</h3>
         <table class="tabla-inversiones">
           <thead>
             <tr>
               <th>Activo</th>
               <th>Cantidad</th>
-              <th>Total Invertido</th>
+              <th>Valor Actual</th>
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody id="tabla-activos-body">
@@ -250,15 +237,17 @@
     let graficoGastos = null;
     let graficoInversiones = null;
 
-    // --- LÓGICA DE CATEGORÍAS Y CAMPOS DINÁMICOS ---
     const tipoSelect = document.getElementById('tipo');
     const categoriaSelect = document.getElementById('categoria');
     const camposActivos = document.getElementById('campos-activos');
+    const labelCantidad = document.getElementById('label-cantidad');
+    const labelMonto = document.getElementById('label-monto');
 
     const opcionesCategorias = {
       ingreso: ['Sueldo / Honorarios', 'Ventas', 'Regalo', 'Otros Ingresos'],
       gasto: ['Supermercado / Comida', 'Vivienda / Servicios', 'Transporte / Nafta', 'Salidas / Ocio', 'Educación', 'Otros Gastos'],
-      inversion: ['Criptomonedas', 'Acciones / CEDEARs', 'Dólares', 'Plazo Fijo', 'Fondos (FCI)']
+      inversion: ['Acciones / CEDEARs', 'Criptomonedas', 'Dólares', 'Plazo Fijo', 'Fondos (FCI)'],
+      venta_inversion: ['Acciones / CEDEARs', 'Criptomonedas', 'Dólares', 'Plazo Fijo', 'Fondos (FCI)']
     };
 
     tipoSelect.addEventListener('change', () => {
@@ -271,19 +260,28 @@
         categoriaSelect.appendChild(option);
       });
 
-      // Mostrar u ocultar campos de "Símbolo" y "Cantidad"
-      if (seleccion === 'inversion') {
+      if (seleccion === 'inversion' || seleccion === 'venta_inversion') {
         camposActivos.style.display = 'grid';
         document.getElementById('activo-simbolo').required = true;
         document.getElementById('activo-cantidad').required = true;
+        
+        if(seleccion === 'venta_inversion') {
+          labelCantidad.innerText = "Cantidad Vendida";
+          labelMonto.innerText = "Dinero Recibido ($)";
+        } else {
+          labelCantidad.innerText = "Cantidad Adquirida";
+          labelMonto.innerText = "Monto Total Invertido ($)";
+        }
       } else {
         camposActivos.style.display = 'none';
         document.getElementById('activo-simbolo').required = false;
         document.getElementById('activo-cantidad').required = false;
+        document.getElementById('activo-cantidad').value = '';
+        document.getElementById('activo-simbolo').value = '';
+        labelMonto.innerText = "Monto Total ($)";
       }
     });
     tipoSelect.dispatchEvent(new Event('change'));
-    // --------------------------------------
 
     onAuthStateChanged(auth, (user) => {
       if (!user) { window.location.href = "index.html"; } 
@@ -296,39 +294,74 @@
 
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
-    // Guardar transacción
+    // GUARDAR TRANSACCIÓN NORMAL
     document.getElementById('transaction-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const tipo = document.getElementById('tipo').value;
+      const montoFinal = parseFloat(document.getElementById('monto').value.replace(',', '.'));
+
+      if (isNaN(montoFinal)) { alert("Ingresa un monto válido."); return; }
+
       const dataParaGuardar = {
-        userId: currentUser.uid,
-        userEmail: currentUser.email,
-        tipo: tipo,
-        monto: parseFloat(document.getElementById('monto').value),
+        userId: currentUser.uid, userEmail: currentUser.email,
+        tipo: tipo, monto: montoFinal,
         categoria: document.getElementById('categoria').value,
         metodoPago: document.getElementById('metodoPago').value,
         descripcion: document.getElementById('descripcion').value,
         fecha: new Date().getTime()
       };
 
-      // Si es inversión, sumamos los campos extra al objeto
-      if(tipo === 'inversion') {
+      if(tipo === 'inversion' || tipo === 'venta_inversion') {
+        const cantidadFinal = parseFloat(document.getElementById('activo-cantidad').value.replace(',', '.'));
+        if (isNaN(cantidadFinal)) { alert("Ingresa una cantidad válida."); return; }
+
         dataParaGuardar.simboloActivo = document.getElementById('activo-simbolo').value.toUpperCase();
-        dataParaGuardar.cantidadActivo = parseFloat(document.getElementById('activo-cantidad').value);
+        dataParaGuardar.cantidadActivo = cantidadFinal;
       }
 
       try {
         await addDoc(collection(db, "transactions"), dataParaGuardar);
-        
-        // Limpiar inputs
-        document.getElementById('monto').value = '';
-        document.getElementById('descripcion').value = '';
-        document.getElementById('activo-simbolo').value = '';
-        document.getElementById('activo-cantidad').value = '';
+        document.getElementById('monto').value = ''; document.getElementById('descripcion').value = '';
+        document.getElementById('activo-simbolo').value = ''; document.getElementById('activo-cantidad').value = '';
       } catch (error) { alert("Error al guardar: " + error.message); }
     });
 
+    // LÓGICA DE ACTUALIZACIÓN DE PRECIO MANUAL
+    document.getElementById('tabla-activos-body').addEventListener('click', async (e) => {
+      const btn = e.target.closest('.btn-actualizar');
+      if (!btn) return;
+
+      const simbolo = btn.getAttribute('data-simbolo');
+      const valorViejo = parseFloat(btn.getAttribute('data-valor'));
+
+      const inputUsuario = prompt(`Vas a actualizar el valor de ${simbolo}.\nFíjate en Ualá y escribe el valor TOTAL actual en pesos (Ej: 85000,50):`);
+      
+      if (inputUsuario === null || inputUsuario.trim() === '') return;
+      
+      const valorNuevo = parseFloat(inputUsuario.replace(',', '.'));
+      if (isNaN(valorNuevo)) { alert("Valor inválido. Usa solo números y punto o coma."); return; }
+
+      const diferencia = valorNuevo - valorViejo;
+
+      // Si la diferencia es 0, no hacemos nada
+      if (Math.abs(diferencia) < 0.01) { alert("El valor es el mismo que ya tenías registrado."); return; }
+
+      // Guardamos la diferencia como un "rendimiento"
+      try {
+        await addDoc(collection(db, "transactions"), {
+          userId: currentUser.uid, userEmail: currentUser.email,
+          tipo: 'rendimiento', monto: diferencia,
+          simboloActivo: simbolo, categoria: 'Ajuste de Mercado',
+          metodoPago: 'N/A', descripcion: `Actualización de precio ${simbolo}`,
+          fecha: new Date().getTime()
+        });
+        alert("¡Valor actualizado correctamente en tu portafolio!");
+      } catch (error) { alert("Error al actualizar: " + error.message); }
+    });
+
+
+    // ESCUCHAR DATOS Y MATEMÁTICA PRINCIPAL
     function iniciarEscuchaDatos() {
       const q = query(collection(db, "transactions"), orderBy("fecha", "desc"));
       
@@ -336,111 +369,130 @@
         const listaContenedor = document.getElementById('transaction-list');
         listaContenedor.innerHTML = '';
 
-        let totalIngresos = 0; let totalGastos = 0; let totalInversiones = 0;
+        let flujoCaja = 0; // Efectivo real
+        let valorPortafolio = 0; // Valor acciones
+        let totalIngresosBrutos = 0; 
+        let totalGastosBrutos = 0; 
+
         let gastosPorCategoria = {}; let inversionesPorCategoria = {}; 
-        
-        // Objeto para acumular cuántos activos tienes (Ej: { BTC: {cant: 0.05, invertido: 50000} })
         let misActivosAcumulados = {};
 
         snapshot.forEach((doc) => {
           const data = doc.data();
           
-          if (data.tipo === 'ingreso') { totalIngresos += data.monto; } 
+          if (data.tipo === 'ingreso') { 
+            flujoCaja += data.monto; totalIngresosBrutos += data.monto;
+          } 
           else if (data.tipo === 'gasto') { 
-            totalGastos += data.monto; 
+            flujoCaja -= data.monto; totalGastosBrutos += data.monto;
             gastosPorCategoria[data.categoria] = (gastosPorCategoria[data.categoria] || 0) + data.monto;
           } 
-          else if (data.tipo === 'inversion') { 
-            totalInversiones += data.monto; 
+          else if (data.tipo === 'inversion') { // COMPRA
+            flujoCaja -= data.monto; 
+            valorPortafolio += data.monto;
+            
             inversionesPorCategoria[data.categoria] = (inversionesPorCategoria[data.categoria] || 0) + data.monto;
             
-            // Lógica para acumular activos
             const simbolo = data.simboloActivo || 'Desconocido';
-            if(!misActivosAcumulados[simbolo]) {
-              misActivosAcumulados[simbolo] = { cantidad: 0, invertido: 0 };
-            }
-            misActivosAcumulados[simbolo].cantidad += data.cantidadActivo || 0;
-            misActivosAcumulados[simbolo].invertido += data.monto;
+            if(!misActivosAcumulados[simbolo]) misActivosAcumulados[simbolo] = { cantidad: 0, valor: 0, categoria: data.categoria };
+            misActivosAcumulados[simbolo].cantidad += data.cantidadActivo;
+            misActivosAcumulados[simbolo].valor += data.monto;
+          }
+          else if (data.tipo === 'venta_inversion') { // VENTA
+            flujoCaja += data.monto; 
+            valorPortafolio -= data.monto;
+            
+            inversionesPorCategoria[data.categoria] = (inversionesPorCategoria[data.categoria] || 0) - data.monto;
+            if(inversionesPorCategoria[data.categoria] < 0) inversionesPorCategoria[data.categoria] = 0;
+
+            const simbolo = data.simboloActivo || 'Desconocido';
+            if(!misActivosAcumulados[simbolo]) misActivosAcumulados[simbolo] = { cantidad: 0, valor: 0, categoria: data.categoria };
+            misActivosAcumulados[simbolo].cantidad -= data.cantidadActivo;
+            misActivosAcumulados[simbolo].valor -= data.monto;
+          }
+          else if (data.tipo === 'rendimiento') { // AJUSTE MANUAL DE PRECIO
+            // El rendimiento NO toca el flujo de caja, solo el valor del portafolio
+            valorPortafolio += data.monto;
+            
+            const simbolo = data.simboloActivo || 'Desconocido';
+            if(!misActivosAcumulados[simbolo]) misActivosAcumulados[simbolo] = { cantidad: 0, valor: 0, categoria: 'Otros' };
+            misActivosAcumulados[simbolo].valor += data.monto;
+
+            // Actualizamos la categoría para el gráfico
+            inversionesPorCategoria[misActivosAcumulados[simbolo].categoria] = (inversionesPorCategoria[misActivosAcumulados[simbolo].categoria] || 0) + data.monto;
           }
 
-          // Renderizar lista de historial
+          // DIBUJAR HISTORIAL VISUAL
           const fechaFormateada = new Date(data.fecha).toLocaleDateString('es-AR');
           let colorClass = 'text-green'; let signo = '+'; let colorHex = '#10b981';
-          
+          let txtBadgeExtra = '';
+
           if(data.tipo === 'gasto') { colorClass = 'card-gastos'; signo = '-'; colorHex = '#ef4444';}
           if(data.tipo === 'inversion') { colorClass = 'card-inversiones'; signo = '↑'; colorHex = '#8b5cf6';}
+          if(data.tipo === 'venta_inversion') { colorClass = 'card-inversiones'; signo = '↓+'; colorHex = '#0ea5e9'; txtBadgeExtra = ' <span class="badge badge-venta">Venta</span>'; }
+          if(data.tipo === 'rendimiento') { colorClass = 'card-inversiones'; signo = data.monto > 0 ? '📈+' : '📉'; colorHex = data.monto > 0 ? '#10b981' : '#ef4444'; txtBadgeExtra = ' <span class="badge badge-ajuste">Ajuste</span>'; }
+
+          let infoActivo = '';
+          if(data.tipo === 'inversion' || data.tipo === 'venta_inversion') infoActivo = `(${data.cantidadActivo.toString().replace('.', ',')} ${data.simboloActivo})`;
 
           listaContenedor.innerHTML += `
             <div class="transaction-item">
               <div class="t-info">
-                <strong>${data.descripcion} ${data.tipo === 'inversion' ? `(${data.cantidadActivo || ''} ${data.simboloActivo || ''})` : ''}</strong>
+                <strong>${data.descripcion} <span style="color:#8b5cf6; font-size:14px;">${infoActivo}</span></strong>
                 <small>
-                  <span class="badge">${data.categoria}</span> 
-                  <span>💳 ${data.metodoPago || 'N/A'}</span>
+                  <span class="badge">${data.categoria}</span>${txtBadgeExtra}
                   <span>📅 ${fechaFormateada}</span>
                   <span>👤 ${data.userEmail.split('@')[0]}</span>
                 </small>
               </div>
               <div class="t-amount ${colorClass}" style="color: ${colorHex};">
-                ${signo}$${data.monto.toLocaleString('es-AR')}
+                ${signo}$${Math.abs(data.monto).toLocaleString('es-AR')}
               </div>
             </div>
           `;
         });
 
-        // Actualizar tarjetas principales
-        document.getElementById('total-ingresos').innerText = `$${totalIngresos.toLocaleString('es-AR')}`;
-        document.getElementById('total-gastos').innerText = `$${totalGastos.toLocaleString('es-AR')}`;
-        document.getElementById('total-inversiones').innerText = `$${totalInversiones.toLocaleString('es-AR')}`;
-        
-        const saldoDisponible = totalIngresos - totalGastos - totalInversiones;
-        document.getElementById('saldo-actual').innerText = `$${saldoDisponible.toLocaleString('es-AR')}`;
+        // Actualizar UI
+        document.getElementById('total-ingresos').innerText = `$${totalIngresosBrutos.toLocaleString('es-AR')}`;
+        document.getElementById('total-gastos').innerText = `$${totalGastosBrutos.toLocaleString('es-AR')}`;
+        document.getElementById('total-inversiones').innerText = `$${Math.max(0, valorPortafolio).toLocaleString('es-AR')}`;
+        document.getElementById('saldo-actual').innerText = `$${flujoCaja.toLocaleString('es-AR')}`;
 
-        // --- LÓGICA DE PROYECCIÓN MATEMÁTICA ---
-        const hoy = new Date();
-        const diaActual = hoy.getDate();
-        const diasDelMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
-        
-        // Evitar divisiones por 0 o números infinitos el día 1 del mes
-        const gastoPromedioDiario = diaActual > 0 ? (totalGastos / diaActual) : 0;
+        // Proyección (Cash Flow)
+        const hoy = new Date(); const diaActual = hoy.getDate(); const diasDelMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+        const gastoPromedioDiario = diaActual > 0 ? (totalGastosBrutos / diaActual) : 0;
         const gastoProyectadoFinDeMes = gastoPromedioDiario * diasDelMes;
-        const proyeccionFinal = totalIngresos - gastoProyectadoFinDeMes - totalInversiones;
+        const proyeccionFinal = totalIngresosBrutos - gastoProyectadoFinDeMes;
 
-        const elementoProyeccion = document.getElementById('proyeccion-sobra');
-        if (totalIngresos === 0) {
-          elementoProyeccion.innerText = `Carga ingresos para calcular`;
-          elementoProyeccion.style.color = '#cbd5e1';
-          elementoProyeccion.style.fontSize = '20px';
-        } else {
-          elementoProyeccion.innerText = `$${proyeccionFinal.toLocaleString('es-AR', {maximumFractionDigits: 0})}`;
-          if(proyeccionFinal < 0) {
-            elementoProyeccion.classList.add('proyeccion-alerta');
-            elementoProyeccion.style.color = '#ef4444';
-          } else {
-            elementoProyeccion.classList.remove('proyeccion-alerta');
-            elementoProyeccion.style.color = '#10b981';
-          }
+        const elProy = document.getElementById('proyeccion-sobra');
+        if (totalIngresosBrutos === 0) { elProy.innerText = `Carga ingresos`; elProy.style.color = '#cbd5e1'; elProy.style.fontSize = '20px'; } 
+        else {
+          elProy.innerText = `$${proyeccionFinal.toLocaleString('es-AR', {maximumFractionDigits: 0})}`;
+          if(proyeccionFinal < 0) { elProy.classList.add('proyeccion-alerta'); elProy.style.color = '#ef4444'; } 
+          else { elProy.classList.remove('proyeccion-alerta'); elProy.style.color = '#10b981'; }
         }
 
-        // --- RENDERIZAR TABLA DE ACTIVOS ---
+        // Renderizar Tabla de Activos
         const tablaBody = document.getElementById('tabla-activos-body');
         tablaBody.innerHTML = '';
         if(Object.keys(misActivosAcumulados).length === 0) {
-          tablaBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8;">Sin activos registrados aún.</td></tr>`;
+          tablaBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">Sin activos registrados.</td></tr>`;
         } else {
           for (const [simbolo, datos] of Object.entries(misActivosAcumulados)) {
-            tablaBody.innerHTML += `
-              <tr>
-                <td>
-                  <div class="td-simbolo">
-                    <div class="simbolo-icon">${simbolo.substring(0,3)}</div>
-                    ${simbolo}
-                  </div>
-                </td>
-                <td>${datos.cantidad}</td>
-                <td style="color: #64748b;">$${datos.invertido.toLocaleString('es-AR')}</td>
-              </tr>
-            `;
+            if(datos.cantidad > 0.000001) { // Oculta si la vendiste toda
+              tablaBody.innerHTML += `
+                <tr>
+                  <td><div class="td-simbolo"><div class="simbolo-icon">${simbolo.substring(0,3)}</div>${simbolo}</div></td>
+                  <td>${datos.cantidad.toString().replace('.', ',')}</td>
+                  <td style="color: #64748b; font-weight: 800;">$${Math.max(0, datos.valor).toLocaleString('es-AR')}</td>
+                  <td>
+                    <button class="btn-actualizar" data-simbolo="${simbolo}" data-valor="${datos.valor}">
+                      🔄 Actualizar
+                    </button>
+                  </td>
+                </tr>
+              `;
+            }
           }
         }
 
@@ -449,7 +501,6 @@
       });
     }
 
-    // Funciones de gráficos (se mantienen igual que antes, simplificadas aquí por espacio)
     function dibujarGraficoGastos(datos) {
       const ctx = document.getElementById('gastosChart').getContext('2d');
       if (graficoGastos) { graficoGastos.destroy(); }
@@ -459,7 +510,11 @@
     function dibujarGraficoInversiones(datos) {
       const ctx = document.getElementById('inversionesChart').getContext('2d');
       if (graficoInversiones) { graficoInversiones.destroy(); }
-      graficoInversiones = new Chart(ctx, { type: 'doughnut', data: { labels: Object.keys(datos).length ? Object.keys(datos) : ['Sin inversiones'], datasets: [{ data: Object.values(datos).length ? Object.values(datos) : [1], backgroundColor: ['#8b5cf6', '#10b981', '#eab308', '#6366f1', '#14b8a6', '#84cc16'], borderWidth: 0 }] }, options: { responsive: true, cutout: '75%', plugins: { legend: { position: 'bottom' } } } });
+      
+      const etiquetasReales = Object.keys(datos).filter(k => datos[k] > 0);
+      const valoresReales = etiquetasReales.map(k => datos[k]);
+
+      graficoInversiones = new Chart(ctx, { type: 'doughnut', data: { labels: etiquetasReales.length ? etiquetasReales : ['Sin inversiones'], datasets: [{ data: valoresReales.length ? valoresReales : [1], backgroundColor: ['#8b5cf6', '#10b981', '#eab308', '#6366f1', '#14b8a6', '#84cc16'], borderWidth: 0 }] }, options: { responsive: true, cutout: '75%', plugins: { legend: { position: 'bottom' } } } });
     }
   </script>
 </body>
