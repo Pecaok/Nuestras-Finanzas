@@ -189,7 +189,8 @@
       signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
         .then((userCredential) => {
           alert("¡Sesión iniciada correctamente! Bienvenido.");
-          // Aquí luego agregaremos la redirección al panel de control
+          // Aquí hacemos la redirección directa al dashboard
+          window.location.href = "dashboard.html";
         })
         .catch((error) => {
           alert("Error al iniciar sesión. Revisa tus datos.");
