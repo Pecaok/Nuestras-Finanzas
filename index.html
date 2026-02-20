@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuestras Finanzas</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+    input, button { width: 100%; margin-bottom: 10px; padding: 10px; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Control de Finanzas</h2>
+    <p>Ingresa tus datos para continuar</p>
+    
+    <input type="email" id="email" placeholder="Correo electrónico (ej: ignaciowollenberg@gmail.com)">
+    <input type="password" id="password" placeholder="Contraseña">
+    
+    <button id="btn-login">Iniciar Sesión</button>
+    <button id="btn-register">Registrar Usuario Nuevo</button>
+  </div>
+
+  <script type="module">
+    // 1. Importamos la app principal, Autenticación y Base de Datos
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    // 2. Tu configuración exacta
+    const firebaseConfig = {
+      apiKey: "AIzaSyAmna4GUHScm-U-dUDtiHVwQ_epL2qkRyU",
+      authDomain: "nuestras-finanzas-813f2.firebaseapp.com",
+      projectId: "nuestras-finanzas-813f2",
+      storageBucket: "nuestras-finanzas-813f2.firebasestorage.app",
+      messagingSenderId: "249109107243",
+      appId: "1:249109107243:web:03fe044ce23537044f106e",
+      measurementId: "G-WG9XXFTPCJ"
+    };
+
+    // 3. Inicializamos los servicios
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 4. Capturamos los elementos del HTML
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const btnRegister = document.getElementById('btn-register');
+    const btnLogin = document.getElementById('btn-login');
+
+    // 5. Lógica para Registrarse
+    btnRegister.addEventListener('click', () => {
+      createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
+        .then((userCredential) => {
+          alert("¡Excelente! Usuario registrado: " + userCredential.user.email);
+        })
+        .catch((error) => {
+          alert("Hubo un error al registrar: " + error.message);
+        });
+    });
+
+    // 6. Lógica para Iniciar Sesión
+    btnLogin.addEventListener('click', () => {
+      signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
+        .then((userCredential) => {
+          alert("¡Sesión iniciada correctamente! Bienvenido.");
+        })
+        .catch((error) => {
+          alert("Error al iniciar sesión: " + error.message);
+        });
+    });
+  </script>
+</body>
+</html>
